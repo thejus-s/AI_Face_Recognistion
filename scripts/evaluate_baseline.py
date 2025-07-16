@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, precision_recall_curve, average_precision_score
 import itertools
 from tqdm import tqdm
 
@@ -33,6 +33,20 @@ for i, j in tqdm(pairs, desc="Computing similarities"):
 fpr, tpr, thresholds = roc_curve(true_labels, similarities)
 roc_auc = auc(fpr, tpr)
 
+precision, recall, pr_thresholds = precision_recall_curve(true_labels, similarities)
+ap_score = average_precision_score(true_labels, similarities)
+
+plt.figure(figsize=(6, 6))
+plt.plot(recall, precision, color='purple', lw=2, label=f'AP = {ap_score:.2f}')
+plt.xlabel("Recall")
+plt.ylabel("Precision")
+plt.title("Precision-Recall Curve")
+plt.legend(loc="lower left")
+plt.grid(True)
+plt.tight_layout()
+plt.savefig("baseline_precision_recall_curve.png")
+plt.show()
+
 plt.figure(figsize=(6, 6))
 plt.plot(fpr, tpr, label=f'ROC Curve (AUC = {roc_auc:.2f})', color='blue')
 plt.plot([0, 1], [0, 1], linestyle='--', color='gray')
@@ -60,3 +74,4 @@ plt.grid(True)
 plt.tight_layout()
 plt.savefig("baseline_similarity_distribution.png")
 plt.show()
+

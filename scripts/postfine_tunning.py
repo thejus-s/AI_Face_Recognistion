@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, precision_recall_curve, average_precision_score
 import matplotlib.pyplot as plt
 import itertools
 from tqdm import tqdm
@@ -25,6 +25,20 @@ for i, j in tqdm(pairs, desc="Computing similarities"):
 # ROC Curve
 fpr, tpr, thresholds = roc_curve(true_labels, similarities)
 roc_auc = auc(fpr, tpr)
+
+precision, recall, thresholds_pr = precision_recall_curve(true_labels, similarities)
+avg_precision = average_precision_score(true_labels, similarities)
+
+plt.figure(figsize=(6, 6))
+plt.plot(recall, precision, color='purple', lw=2, label=f'PR Curve (AP = {avg_precision:.2f})')
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.title('Post-Tuning Precision-Recall Curve')
+plt.legend(loc="lower left")
+plt.grid(True)
+plt.tight_layout()
+plt.savefig("post_tuning_precision_recall_curve.png")
+plt.show()
 
 plt.figure(figsize=(6, 6))
 plt.plot(fpr, tpr, color='green', lw=2, label=f'Post-Tuning ROC (AUC = {roc_auc:.2f})')
